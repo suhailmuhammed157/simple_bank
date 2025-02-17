@@ -10,4 +10,5 @@ sql:
         emit_json_tags: true
         emit_interface: false
         emit_empty_slices: false
+        sql_package: "database/sql"
 
