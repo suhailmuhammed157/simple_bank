@@ -33,6 +33,9 @@ jobs:
         with:
           go-version: "^1.20"
 
+      - name: Run migrations
+        run: make migrateUp
+
       - name: Test
         run: make test
 
