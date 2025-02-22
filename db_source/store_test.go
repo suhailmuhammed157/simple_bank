@@ -17,10 +17,6 @@ func TestTransferTx(t *testing.T) {
 
 	n := 5
 
-	// var wg sync.WaitGroup
-
-	// wg.Add(n)
-
 	results := make(chan TransferTxResult, n)
 	errors := make(chan error, n)
 
@@ -28,7 +24,6 @@ func TestTransferTx(t *testing.T) {
 
 	for i := 0; i < n; i++ {
 		go func() {
-			// defer wg.Done()
 			result, err := store.TransferTx(context.Background(), TransferTxParams{
 				FromAccountID: account1.ID,
 				ToAccountID:   account2.ID,
@@ -114,9 +109,5 @@ func TestTransferTx(t *testing.T) {
 
 	require.Equal(t, account1.Balance-int64(n)*amount, updateAccount1.Balance)
 	require.Equal(t, account2.Balance+int64(n)*amount, updateAccount2.Balance)
-
-	// wg.Wait()
-	// close(results)
-	// close(errors)
 
 }
