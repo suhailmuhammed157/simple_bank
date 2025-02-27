@@ -13,10 +13,10 @@ type Server struct {
 func NewServer(store *db_source.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
-
 	router.POST("/accounts", server.CreateAccount)
 	router.GET("/accounts/:id", server.GetAccountDetails)
 	router.GET("/accounts", server.ListAccounts)
+	router.POST("/transfers", server.CreateTransfer)
 
 	server.router = router
 	return server
