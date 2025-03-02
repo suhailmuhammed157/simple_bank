@@ -9,9 +9,15 @@ dropDb:
 
 migrateUp:
 	migrate -path database/migrations -database "postgres://root:password@localhost:5433/simple_bank?sslmode=disable" -verbose up
+	
+migrateUp1:
+	migrate -path database/migrations -database "postgres://root:password@localhost:5433/simple_bank?sslmode=disable" -verbose up 1
 
 migrateDown:
 	migrate -path database/migrations -database "postgres://root:password@localhost:5433/simple_bank?sslmode=disable" -verbose down
+
+migrateDown1:
+	migrate -path database/migrations -database "postgres://root:password@localhost:5433/simple_bank?sslmode=disable" -verbose down 1
 
 sqlc:
 	sqlc generate
