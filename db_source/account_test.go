@@ -47,7 +47,7 @@ func TestGetAccount(t *testing.T) {
 	require.Equal(t, newAccount.Balance, account.Balance)
 	require.Equal(t, newAccount.Currency, account.Currency)
 
-	require.WithinDuration(t, newAccount.CreatedAt.Time, account.CreatedAt.Time, time.Second)
+	require.WithinDuration(t, newAccount.CreatedAt, account.CreatedAt, time.Second)
 }
 func TestDeleteAccount(t *testing.T) {
 	newAccount := createRandomAccount(t)
