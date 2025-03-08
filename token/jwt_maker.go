@@ -13,18 +13,17 @@ const minSecretKeySize = 32
 var ErrInvalidToken = fmt.Errorf("invalid token")
 
 type JWTMaker struct {
-	secretKey string
+	secretKey []byte
 }
 
 func NewJWTMaker(secretKey string) (Maker, error) {
 	if len(secretKey) < minSecretKeySize {
 		return nil, fmt.Errorf("secret key length should be at least %d characters ", minSecretKeySize)
 	}
-	return &JWTMaker{secretKey: secretKey}, nil
+	return &JWTMaker{secretKey: []byte(secretKey)}, nil
 }
 
 func (jwtMaker *JWTMaker) CreateToken(username string, duration time.Duration) (string, error) {
-
 	payload, err := NewPayload(username, duration)
 	if err != nil {
 		return "", err
