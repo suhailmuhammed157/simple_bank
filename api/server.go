@@ -20,11 +20,7 @@ func NewServer(store *db_source.Store) *Server {
 		v.RegisterValidation("currency", validateCurrency)
 	}
 
-	router.POST("/users", server.CreateUser)
-	router.POST("/accounts", server.CreateAccount)
-	router.GET("/accounts/:id", server.GetAccountDetails)
-	router.GET("/accounts", server.ListAccounts)
-	router.POST("/transfers", server.CreateTransfer)
+	server.apiRoutes(router)
 
 	server.router = router
 	return server
@@ -36,4 +32,13 @@ func (server *Server) Start(address string) error {
 
 func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
+}
+
+func (server *Server) apiRoutes(router *gin.Engine) {
+	router.POST("/users", server.CreateUser)
+	router.POST("/users/login", server.Login)
+	router.POST("/accounts", server.CreateAccount)
+	router.GET("/accounts/:id", server.GetAccountDetails)
+	router.GET("/accounts", server.ListAccounts)
+	router.POST("/transfers", server.CreateTransfer)
 }

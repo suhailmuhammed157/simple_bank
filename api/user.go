@@ -60,14 +60,18 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	formattedUserResponse := UserResponse{
+	formattedUserResponse := MakeUserResponse(user)
+
+	ctx.JSON(http.StatusOK, formattedUserResponse)
+
+}
+
+func MakeUserResponse(user db_source.User) UserResponse {
+	return UserResponse{
 		Username:          user.Username,
 		FullName:          user.FullName,
 		Email:             user.Email,
 		PasswordChangedAt: user.PasswordChangedAt,
 		CreatedAt:         user.CreatedAt,
 	}
-
-	ctx.JSON(http.StatusOK, formattedUserResponse)
-
 }
