@@ -1,10 +1,13 @@
 package token
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+var ErrExpiredToken = fmt.Errorf("token expired")
 
 type Payload struct {
 	ID        uuid.UUID `json:"id"`
@@ -28,5 +31,8 @@ func NewPayload(username string, duration time.Duration) (*Payload, error) {
 }
 
 func (payload *Payload) Valid() error {
+	if time.Now().After(payload.ExpiredAt) {
+		return ErrExpiredToken
+	}
 	return nil
 }
