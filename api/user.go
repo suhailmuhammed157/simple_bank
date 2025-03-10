@@ -1,6 +1,8 @@
 package api
 
 import (
+	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -74,4 +76,56 @@ func MakeUserResponse(user db_source.User) UserResponse {
 		PasswordChangedAt: user.PasswordChangedAt,
 		CreatedAt:         user.CreatedAt,
 	}
+}
+
+type LoginRequest struct {
+	Username string `json:"username" binding:"required,alphanum"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+type LoginResponse struct {
+	AccessToken string       `json:"access_token"`
+	User        UserResponse `json:"password"`
+}
+
+func (server *Server) Login(ctx *gin.Context) {
+
+	var req LoginRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	user, err := server.store.GetUser(ctx, req.Username)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	validateRes := utils.ValidatePassword(user.HashedPassword, req.Password)
+
+	if !validateRes {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("username or password not found")))
+		return
+	}
+
+	access_token, err := server.tokenMaker.CreateToken(user.Username, server.config.TokenDuration)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	userResponse := MakeUserResponse(user)
+
+	response := &LoginResponse{
+		AccessToken: access_token,
+		User:        userResponse,
+	}
+	ctx.JSON(http.StatusOK, response)
+
 }
