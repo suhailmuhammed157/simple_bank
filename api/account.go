@@ -2,15 +2,16 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"github.com/suhailmuhammed157/simple_bank/db_source"
+	"github.com/suhailmuhammed157/simple_bank/token"
 )
 
 type CreateAccountRequest struct {
-	Owner    string `json:"owner" binding:"required"`
 	Currency string `json:"currency" binding:"required,currency"`
 }
 
@@ -22,8 +23,10 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 		return
 	}
 
+	authPayload := ctx.MustGet(authorizationPayload).(*token.Payload)
+
 	args := db_source.CreateAccountParams{
-		Owner:    req.Owner,
+		Owner:    authPayload.Username,
 		Currency: req.Currency,
 		Balance:  0,
 	}
@@ -66,6 +69,12 @@ func (server *Server) GetAccountDetails(ctx *gin.Context) {
 			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	authPayload := ctx.MustGet(authorizationPayload).(*token.Payload)
+	if account.Owner != authPayload.Username {
+		ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("account does not belong to the current user ")))
 		return
 	}
 

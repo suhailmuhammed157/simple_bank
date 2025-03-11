@@ -45,9 +45,11 @@ func (server *Server) setupApiRoutes() {
 	router := gin.Default()
 	router.POST("/users", server.CreateUser)
 	router.POST("/users/login", server.Login)
-	router.POST("/accounts", server.CreateAccount)
-	router.GET("/accounts/:id", server.GetAccountDetails)
-	router.GET("/accounts", server.ListAccounts)
-	router.POST("/transfers", server.CreateTransfer)
+
+	routerGroup := router.Group("/").Use(AuthenticateUser(server.tokenMaker))
+	routerGroup.POST("/accounts", server.CreateAccount)
+	routerGroup.GET("/accounts/:id", server.GetAccountDetails)
+	routerGroup.GET("/accounts", server.ListAccounts)
+	routerGroup.POST("/transfers", server.CreateTransfer)
 	server.router = router
 }
