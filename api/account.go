@@ -89,6 +89,8 @@ type ListAccountsParams struct {
 
 func (server *Server) ListAccounts(ctx *gin.Context) {
 
+	authPayload := ctx.MustGet(authorizationPayload).(*token.Payload)
+
 	var req ListAccountsParams
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 
@@ -97,6 +99,7 @@ func (server *Server) ListAccounts(ctx *gin.Context) {
 	}
 
 	accounts, err := server.store.ListAccounts(ctx, db_source.ListAccountsParams{
+		Owner:  authPayload.Username,
 		Limit:  req.PageSize,
 		Offset: (req.PageId - 1) * req.PageSize,
 	})
