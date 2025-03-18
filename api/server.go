@@ -45,6 +45,7 @@ func (server *Server) setupApiRoutes() {
 	router := gin.Default()
 	router.POST("/users", server.CreateUser)
 	router.POST("/users/login", server.Login)
+	router.POST("/token/renew_access", server.IssueNewToken)
 
 	routerGroup := router.Group("/").Use(AuthenticateUser(server.tokenMaker))
 	routerGroup.POST("/accounts", server.CreateAccount)

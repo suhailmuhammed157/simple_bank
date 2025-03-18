@@ -84,8 +84,11 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	AccessToken string       `json:"access_token"`
-	User        UserResponse `json:"password"`
+	AccessToken           string       `json:"access_token"`
+	AccessTokenExpiresAt  time.Time    `json:"access_token_expires_at"`
+	RefreshToken          string       `json:"refresh_token"`
+	RefreshTokenExpiresAt time.Time    `json:"refresh_token_expires_at"`
+	User                  UserResponse `json:"password"`
 }
 
 func (server *Server) Login(ctx *gin.Context) {
@@ -114,17 +117,34 @@ func (server *Server) Login(ctx *gin.Context) {
 		return
 	}
 
-	access_token, err := server.tokenMaker.CreateToken(user.Username, server.config.TokenDuration)
+	access_token, accessPayload, err := server.tokenMaker.CreateToken(user.Username, server.config.TokenDuration)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	userResponse := MakeUserResponse(user)
+	refresh_token, refreshPayload, err := server.tokenMaker.CreateToken(user.Username, server.config.RefreshTokenDuration)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	server.store.CreateSession(ctx, db_source.CreateSessionParams{
+		ID:           refreshPayload.ID,
+		Username:     user.Username,
+		RefreshToken: refresh_token,
+		UserAgent:    ctx.Request.UserAgent(),
+		ClientIp:     ctx.ClientIP(),
+		IsBlocked:    false,
+		ExpiresAt:    refreshPayload.ExpiredAt,
+	})
 
 	response := &LoginResponse{
-		AccessToken: access_token,
-		User:        userResponse,
+		AccessToken:           access_token,
+		AccessTokenExpiresAt:  accessPayload.ExpiredAt,
+		RefreshToken:          refresh_token,
+		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
+		User:                  MakeUserResponse(user),
 	}
 	ctx.JSON(http.StatusOK, response)
 
