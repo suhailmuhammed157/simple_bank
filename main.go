@@ -22,13 +22,18 @@ func main() {
 	}
 
 	store := db_source.NewStore(conn)
-	server, err := api.NewServer(&config, store)
-	if err != nil {
-		log.Fatal("Cannot start server", err)
-	}
-	err = server.Start(config.ServerAddress)
+
+	err = apiServer(config.HttpServerAddress, &config, store)
 	if err != nil {
 		log.Fatal("Cannot start server")
 	}
+}
+
+func apiServer(httpAddress string, config *utils.Config, store *db_source.Store) error {
+	server, err := api.NewServer(config, store)
+	if err != nil {
+		log.Fatal("Cannot start server", err)
+	}
+	return server.Start(httpAddress)
 
 }
