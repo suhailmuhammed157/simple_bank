@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb;
 
-option go_package = "github.com/suhailmuhammed157/simple_bank";
+option go_package = "github.com/suhailmuhammed157/simple_bank/pb";
 import "user.proto";
 
 service SimpleBank{
