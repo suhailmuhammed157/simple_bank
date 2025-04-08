@@ -13,10 +13,7 @@ type Metadata struct {
 }
 
 func (server *Server) extractMetadata(ctx context.Context) *Metadata {
-	mtd := &Metadata{
-		UserAgent: "",
-		ClientIp:  "",
-	}
+	mtd := &Metadata{}
 
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		userAgents := md.Get("user-agent")
