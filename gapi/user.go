@@ -136,6 +136,37 @@ func (server *Server) GetUserDetails(ctx context.Context, req *pb.GetUserDetails
 	return userResponse, nil
 }
 
+func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	violations := validateUpdateUserRequest(req)
+	if len(violations) > 0 {
+		return nil, invalidArgumentError(violations)
+	}
+
+	args := db_source.UpdateUserParams{
+		HashedPassword: sql.NullString{
+			String: req.GetPassword(),
+			Valid:  req.Password != nil,
+		},
+		FullName: sql.NullString{
+			String: req.GetFullName(),
+			Valid:  req.FullName != nil,
+		},
+		Email: sql.NullString{
+			String: req.GetEmail(),
+			Valid:  req.Email != nil,
+		},
+		Username: req.GetUsername(),
+	}
+	updatedUser, err := server.store.UpdateUser(ctx, args)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "update user failed %v", err)
+	}
+	response := &pb.UpdateUserResponse{
+		User: convertUser(&updatedUser),
+	}
+	return response, nil
+}
+
 func validateCreateUserRequest(req *pb.CreateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 
 	if err := val.ValidateUsername(req.Username); err != nil {
@@ -170,6 +201,15 @@ func validateLoginRequest(req *pb.LoginUserRequest) (violations []*errdetails.Ba
 }
 
 func validateGetUserDetailsRequest(req *pb.GetUserDetailsRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+
+	if err := val.ValidateUsername(req.Username); err != nil {
+		violations = append(violations, fieldViolation("username", err))
+	}
+
+	return violations
+}
+
+func validateUpdateUserRequest(req *pb.UpdateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 
 	if err := val.ValidateUsername(req.Username); err != nil {
 		violations = append(violations, fieldViolation("username", err))

@@ -429,6 +429,119 @@ func (x *LoginUserResponse) GetRefreshTokenExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// -------- update user ----------
+type UpdateUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Password      *string                `protobuf:"bytes,2,opt,name=password,proto3,oneof" json:"password,omitempty"`
+	FullName      *string                `protobuf:"bytes,3,opt,name=full_name,json=fullName,proto3,oneof" json:"full_name,omitempty"`
+	Email         *string                `protobuf:"bytes,4,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserRequest) Reset() {
+	*x = UpdateUserRequest{}
+	mi := &file_user_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserRequest) ProtoMessage() {}
+
+func (x *UpdateUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserRequest.ProtoReflect.Descriptor instead.
+func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
+	return file_user_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UpdateUserRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *UpdateUserRequest) GetPassword() string {
+	if x != nil && x.Password != nil {
+		return *x.Password
+	}
+	return ""
+}
+
+func (x *UpdateUserRequest) GetFullName() string {
+	if x != nil && x.FullName != nil {
+		return *x.FullName
+	}
+	return ""
+}
+
+func (x *UpdateUserRequest) GetEmail() string {
+	if x != nil && x.Email != nil {
+		return *x.Email
+	}
+	return ""
+}
+
+type UpdateUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserResponse) Reset() {
+	*x = UpdateUserResponse{}
+	mi := &file_user_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserResponse) ProtoMessage() {}
+
+func (x *UpdateUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserResponse.ProtoReflect.Descriptor instead.
+func (*UpdateUserResponse) Descriptor() ([]byte, []int) {
+	return file_user_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdateUserResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
 var File_user_proto protoreflect.FileDescriptor
 
 const file_user_proto_rawDesc = "" +
@@ -461,7 +574,18 @@ const file_user_proto_rawDesc = "" +
 	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12Q\n" +
 	"\x17access_token_expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x14accessTokenExpiresAt\x12#\n" +
 	"\rrefresh_token\x18\x04 \x01(\tR\frefreshToken\x12S\n" +
-	"\x18refresh_token_expires_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x15refreshTokenExpiresAtB-Z+github.com/suhailmuhammed157/simple_bank/pbb\x06proto3"
+	"\x18refresh_token_expires_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x15refreshTokenExpiresAt\"\xb2\x01\n" +
+	"\x11UpdateUserRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x1f\n" +
+	"\bpassword\x18\x02 \x01(\tH\x00R\bpassword\x88\x01\x01\x12 \n" +
+	"\tfull_name\x18\x03 \x01(\tH\x01R\bfullName\x88\x01\x01\x12\x19\n" +
+	"\x05email\x18\x04 \x01(\tH\x02R\x05email\x88\x01\x01B\v\n" +
+	"\t_passwordB\f\n" +
+	"\n" +
+	"_full_nameB\b\n" +
+	"\x06_email\"2\n" +
+	"\x12UpdateUserResponse\x12\x1c\n" +
+	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04userB-Z+github.com/suhailmuhammed157/simple_bank/pbb\x06proto3"
 
 var (
 	file_user_proto_rawDescOnce sync.Once
@@ -475,7 +599,7 @@ func file_user_proto_rawDescGZIP() []byte {
 	return file_user_proto_rawDescData
 }
 
-var file_user_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_user_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_user_proto_goTypes = []any{
 	(*User)(nil),                   // 0: pb.User
 	(*CreateUserRequest)(nil),      // 1: pb.CreateUserRequest
@@ -484,21 +608,24 @@ var file_user_proto_goTypes = []any{
 	(*GetUserDetailsResponse)(nil), // 4: pb.GetUserDetailsResponse
 	(*LoginUserRequest)(nil),       // 5: pb.LoginUserRequest
 	(*LoginUserResponse)(nil),      // 6: pb.LoginUserResponse
-	(*timestamppb.Timestamp)(nil),  // 7: google.protobuf.Timestamp
+	(*UpdateUserRequest)(nil),      // 7: pb.UpdateUserRequest
+	(*UpdateUserResponse)(nil),     // 8: pb.UpdateUserResponse
+	(*timestamppb.Timestamp)(nil),  // 9: google.protobuf.Timestamp
 }
 var file_user_proto_depIdxs = []int32{
-	7, // 0: pb.User.password_changed_at:type_name -> google.protobuf.Timestamp
-	7, // 1: pb.User.created_at:type_name -> google.protobuf.Timestamp
+	9, // 0: pb.User.password_changed_at:type_name -> google.protobuf.Timestamp
+	9, // 1: pb.User.created_at:type_name -> google.protobuf.Timestamp
 	0, // 2: pb.CreateUserResponse.user:type_name -> pb.User
 	0, // 3: pb.GetUserDetailsResponse.user:type_name -> pb.User
 	0, // 4: pb.LoginUserResponse.user:type_name -> pb.User
-	7, // 5: pb.LoginUserResponse.access_token_expires_at:type_name -> google.protobuf.Timestamp
-	7, // 6: pb.LoginUserResponse.refresh_token_expires_at:type_name -> google.protobuf.Timestamp
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	9, // 5: pb.LoginUserResponse.access_token_expires_at:type_name -> google.protobuf.Timestamp
+	9, // 6: pb.LoginUserResponse.refresh_token_expires_at:type_name -> google.protobuf.Timestamp
+	0, // 7: pb.UpdateUserResponse.user:type_name -> pb.User
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_user_proto_init() }
@@ -506,13 +633,14 @@ func file_user_proto_init() {
 	if File_user_proto != nil {
 		return
 	}
+	file_user_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_proto_rawDesc), len(file_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

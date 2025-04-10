@@ -25,31 +25,37 @@ var File_rpc_simple_bank_proto protoreflect.FileDescriptor
 const file_rpc_simple_bank_proto_rawDesc = "" +
 	"\n" +
 	"\x15rpc_simple_bank.proto\x12\x02pb\x1a\n" +
-	"user.proto2\xc8\x01\n" +
+	"user.proto2\x85\x02\n" +
 	"\n" +
 	"SimpleBank\x12;\n" +
 	"\n" +
 	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\x124\n" +
 	"\x05Login\x12\x14.pb.LoginUserRequest\x1a\x15.pb.LoginUserResponse\x12G\n" +
-	"\x0eGetUserDetails\x12\x19.pb.GetUserDetailsRequest\x1a\x1a.pb.GetUserDetailsResponseB-Z+github.com/suhailmuhammed157/simple_bank/pbb\x06proto3"
+	"\x0eGetUserDetails\x12\x19.pb.GetUserDetailsRequest\x1a\x1a.pb.GetUserDetailsResponse\x12;\n" +
+	"\n" +
+	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponseB-Z+github.com/suhailmuhammed157/simple_bank/pbb\x06proto3"
 
 var file_rpc_simple_bank_proto_goTypes = []any{
 	(*CreateUserRequest)(nil),      // 0: pb.CreateUserRequest
 	(*LoginUserRequest)(nil),       // 1: pb.LoginUserRequest
 	(*GetUserDetailsRequest)(nil),  // 2: pb.GetUserDetailsRequest
-	(*CreateUserResponse)(nil),     // 3: pb.CreateUserResponse
-	(*LoginUserResponse)(nil),      // 4: pb.LoginUserResponse
-	(*GetUserDetailsResponse)(nil), // 5: pb.GetUserDetailsResponse
+	(*UpdateUserRequest)(nil),      // 3: pb.UpdateUserRequest
+	(*CreateUserResponse)(nil),     // 4: pb.CreateUserResponse
+	(*LoginUserResponse)(nil),      // 5: pb.LoginUserResponse
+	(*GetUserDetailsResponse)(nil), // 6: pb.GetUserDetailsResponse
+	(*UpdateUserResponse)(nil),     // 7: pb.UpdateUserResponse
 }
 var file_rpc_simple_bank_proto_depIdxs = []int32{
 	0, // 0: pb.SimpleBank.CreateUser:input_type -> pb.CreateUserRequest
 	1, // 1: pb.SimpleBank.Login:input_type -> pb.LoginUserRequest
 	2, // 2: pb.SimpleBank.GetUserDetails:input_type -> pb.GetUserDetailsRequest
-	3, // 3: pb.SimpleBank.CreateUser:output_type -> pb.CreateUserResponse
-	4, // 4: pb.SimpleBank.Login:output_type -> pb.LoginUserResponse
-	5, // 5: pb.SimpleBank.GetUserDetails:output_type -> pb.GetUserDetailsResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	3, // 3: pb.SimpleBank.UpdateUser:input_type -> pb.UpdateUserRequest
+	4, // 4: pb.SimpleBank.CreateUser:output_type -> pb.CreateUserResponse
+	5, // 5: pb.SimpleBank.Login:output_type -> pb.LoginUserResponse
+	6, // 6: pb.SimpleBank.GetUserDetails:output_type -> pb.GetUserDetailsResponse
+	7, // 7: pb.SimpleBank.UpdateUser:output_type -> pb.UpdateUserResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
