@@ -13,6 +13,7 @@ message User{
 	google.protobuf.Timestamp created_at = 5;
 }
 
+// -------- create user ----------
 message CreateUserRequest{
     string username = 1;
 	string password = 2;
@@ -24,6 +25,19 @@ message CreateUserResponse{
     User user = 1;
 }
 
+// ----------------------
+
+// -------- get user details ----------
+message GetUserDetailsRequest{
+    string username = 1;
+}
+
+message GetUserDetailsResponse{
+    User user = 1;
+}
+// ----------------------
+
+// --------- login user ---------
 message LoginUserRequest{
     string username = 1;
 	string password = 2;
@@ -36,3 +50,5 @@ message LoginUserResponse{
 	string       refresh_token = 4;
 	google.protobuf.Timestamp    refresh_token_expires_at = 5;
 }
+// ----------------------
+

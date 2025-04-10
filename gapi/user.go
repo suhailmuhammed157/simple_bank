@@ -112,6 +112,30 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginUserRequest) (*pb.
 	return response, nil
 }
 
+func (server *Server) GetUserDetails(ctx context.Context, req *pb.GetUserDetailsRequest) (*pb.GetUserDetailsResponse, error) {
+
+	violations := validateGetUserDetailsRequest(req)
+
+	if len(violations) > 0 {
+		return nil, invalidArgumentError(violations)
+	}
+
+	user, err := server.store.GetUser(ctx, req.GetUsername())
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "user not found: %s", err)
+
+		}
+		return nil, status.Errorf(codes.NotFound, "user not found: %s", err)
+
+	}
+	userResponse := &pb.GetUserDetailsResponse{
+		User: convertUser(&user),
+	}
+	return userResponse, nil
+}
+
 func validateCreateUserRequest(req *pb.CreateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 
 	if err := val.ValidateUsername(req.Username); err != nil {
@@ -142,5 +166,14 @@ func validateLoginRequest(req *pb.LoginUserRequest) (violations []*errdetails.Ba
 	if err := val.ValidatePassword(req.Password); err != nil {
 		violations = append(violations, fieldViolation("password", err))
 	}
+	return violations
+}
+
+func validateGetUserDetailsRequest(req *pb.GetUserDetailsRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+
+	if err := val.ValidateUsername(req.Username); err != nil {
+		violations = append(violations, fieldViolation("username", err))
+	}
+
 	return violations
 }
