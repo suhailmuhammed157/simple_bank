@@ -143,10 +143,7 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	}
 
 	args := db_source.UpdateUserParams{
-		HashedPassword: sql.NullString{
-			String: req.GetPassword(),
-			Valid:  req.Password != nil,
-		},
+
 		FullName: sql.NullString{
 			String: req.GetFullName(),
 			Valid:  req.FullName != nil,
@@ -157,6 +154,18 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 		},
 		Username: req.GetUsername(),
 	}
+
+	if req.Password != nil {
+		hashedPassword, err := utils.EncryptPassword(req.GetPassword())
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "Failed to hash password %s", err)
+		}
+		args.HashedPassword = sql.NullString{
+			String: hashedPassword,
+			Valid:  req.Password != nil,
+		}
+	}
+
 	updatedUser, err := server.store.UpdateUser(ctx, args)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "update user failed %v", err)
