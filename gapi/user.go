@@ -115,13 +115,19 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginUserRequest) (*pb.
 
 func (server *Server) GetUserDetails(ctx context.Context, req *pb.GetUserDetailsRequest) (*pb.GetUserDetailsResponse, error) {
 
-	violations := validateGetUserDetailsRequest(req)
+	payload, err := server.authenticateUser(ctx)
+
+	if err != nil {
+		return nil, status.Errorf(codes.PermissionDenied, "token error: %v", err)
+	}
+
+	violations := validateGetUserDetailsRequest(payload.Username)
 
 	if len(violations) > 0 {
 		return nil, invalidArgumentError(violations)
 	}
 
-	user, err := server.store.GetUser(ctx, req.GetUsername())
+	user, err := server.store.GetUser(ctx, payload.Username)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -138,7 +144,12 @@ func (server *Server) GetUserDetails(ctx context.Context, req *pb.GetUserDetails
 }
 
 func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
-	violations := validateUpdateUserRequest(req)
+	payload, err := server.authenticateUser(ctx)
+
+	if err != nil {
+		return nil, status.Errorf(codes.PermissionDenied, "token error: %v", err)
+	}
+	violations := validateUpdateUserRequest(req, payload.Username)
 	if len(violations) > 0 {
 		return nil, invalidArgumentError(violations)
 	}
@@ -153,7 +164,7 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 			String: req.GetEmail(),
 			Valid:  req.Email != nil,
 		},
-		Username: req.GetUsername(),
+		Username: payload.Username,
 	}
 
 	if req.Password != nil {
@@ -220,18 +231,18 @@ func validateLoginRequest(req *pb.LoginUserRequest) (violations []*errdetails.Ba
 	return violations
 }
 
-func validateGetUserDetailsRequest(req *pb.GetUserDetailsRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+func validateGetUserDetailsRequest(username string) (violations []*errdetails.BadRequest_FieldViolation) {
 
-	if err := val.ValidateUsername(req.Username); err != nil {
+	if err := val.ValidateUsername(username); err != nil {
 		violations = append(violations, fieldViolation("username", err))
 	}
 
 	return violations
 }
 
-func validateUpdateUserRequest(req *pb.UpdateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+func validateUpdateUserRequest(req *pb.UpdateUserRequest, username string) (violations []*errdetails.BadRequest_FieldViolation) {
 
-	if err := val.ValidateUsername(req.Username); err != nil {
+	if err := val.ValidateUsername(username); err != nil {
 		violations = append(violations, fieldViolation("username", err))
 	}
 
