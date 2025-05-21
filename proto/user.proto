@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/suhailmuhammed157/simple_bank/pb";
+import "google/protobuf/timestamp.proto";
+
+message User{
+    string    username = 1;
+	string    full_name = 2;
+	string    email = 3;
+	google.protobuf.Timestamp password_changed_at = 4;
+	google.protobuf.Timestamp created_at = 5;
+}
+
+// -------- create user ----------
+message CreateUserRequest{
+    string username = 1;
+	string password = 2;
+	string full_name = 3;
+	string email = 4;
+}
+
+message CreateUserResponse{
+    User user = 1;
+}
+
+// ----------------------
+
+// -------- get user details ----------
+message GetUserDetailsRequest{
+    string username = 1;
+}
+
+message GetUserDetailsResponse{
+    User user = 1;
+}
+// ----------------------
+
+// --------- login user ---------
+message LoginUserRequest{
+    string username = 1;
+	string password = 2;
+}
+
+message LoginUserResponse{
+    User user = 1;
+    string       access_token = 2;
+	google.protobuf.Timestamp    access_token_expires_at = 3;
+	string       refresh_token = 4;
+	google.protobuf.Timestamp    refresh_token_expires_at = 5;
+}
+// ----------------------
+
+// -------- update user ----------
+message UpdateUserRequest{
+	optional string password = 2;
+	optional string full_name = 3;
+	optional string email = 4;
+}
+
+message UpdateUserResponse{
+    User user = 1;
+}
+
+// ----------------------
