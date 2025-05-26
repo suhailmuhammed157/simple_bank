@@ -27,3 +27,9 @@ func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store *db_source.Store
 		store:  store,
 	}
 }
+
+func (redisTaskProcessor *RedisTaskProcessor) Start() error {
+	mux := asynq.NewServeMux()
+	mux.HandleFunc(TaskSendVerifyEmail, redisTaskProcessor.ProcessTaskSendVerifyEmail)
+	return redisTaskProcessor.server.Run(mux)
+}
