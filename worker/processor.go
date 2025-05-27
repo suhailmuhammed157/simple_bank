@@ -9,6 +9,7 @@ import (
 
 type TaskProcessor interface {
 	ProcessTaskSendVerifyEmail(ctx context.Context, task *asynq.Task) error
+	Start() error
 }
 
 type RedisTaskProcessor struct {
@@ -22,7 +23,7 @@ func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store *db_source.Store
 		asynq.Config{},
 	)
 
-	return RedisTaskProcessor{
+	return &RedisTaskProcessor{
 		server: server,
 		store:  store,
 	}

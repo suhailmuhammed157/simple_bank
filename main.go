@@ -6,6 +6,7 @@ import (
 
 	"net"
 
+	"github.com/hibiken/asynq"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -13,6 +14,7 @@ import (
 	"github.com/suhailmuhammed157/simple_bank/gapi"
 	"github.com/suhailmuhammed157/simple_bank/pb"
 	"github.com/suhailmuhammed157/simple_bank/utils"
+	"github.com/suhailmuhammed157/simple_bank/worker"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -36,7 +38,19 @@ func main() {
 
 	store := db_source.NewStore(conn)
 
+	redisConn := asynq.RedisClientOpt{Addr: "0.0.0.0:6379"}
+
+	go runTaskProcessor(store, redisConn)
 	err = grpcServer(&config, store)
+	if err != nil {
+		log.Fatal().Msg("Cannot start server")
+	}
+}
+
+func runTaskProcessor(store *db_source.Store, redisConn asynq.RedisClientOpt) {
+
+	taskProcessor := worker.NewRedisTaskProcessor(redisConn, store)
+	err := taskProcessor.Start()
 	if err != nil {
 		log.Fatal().Msg("Cannot start server")
 	}
