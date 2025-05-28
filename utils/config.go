@@ -12,6 +12,7 @@ type Config struct {
 	DataSource           string        `mapstructure:"DATA_SOURCE"`
 	HttpServerAddress    string        `mapstructure:"HTTP_SERVER_ADDRESS"`
 	GrpcServerAddress    string        `mapstructure:"GRPC_SERVER_ADDRESS"`
+	RedisServerAddress   string        `mapstructure:"REDIS_SERVER_ADDRESS"`
 	SymmetricKey         string        `mapstructure:"SYMMETRIC_KEY"`
 	TokenDuration        time.Duration `mapstructure:"TOKEN_DURATION"`
 	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`

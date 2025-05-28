@@ -27,7 +27,6 @@ func main() {
 	}
 
 	if err != nil {
-
 		log.Fatal().Msg("Config loading error")
 	}
 
@@ -38,17 +37,17 @@ func main() {
 
 	store := db_source.NewStore(conn)
 
-	redisConn := asynq.RedisClientOpt{Addr: "0.0.0.0:6379"}
+	redisConn := asynq.RedisClientOpt{Addr: config.RedisServerAddress}
+	taskDistributor := worker.NewRedisTaskDistributor(redisConn)
 
 	go runTaskProcessor(store, redisConn)
-	err = grpcServer(&config, store)
+	err = grpcServer(&config, store, taskDistributor)
 	if err != nil {
 		log.Fatal().Msg("Cannot start server")
 	}
 }
 
 func runTaskProcessor(store *db_source.Store, redisConn asynq.RedisClientOpt) {
-
 	taskProcessor := worker.NewRedisTaskProcessor(redisConn, store)
 	err := taskProcessor.Start()
 	if err != nil {
@@ -56,8 +55,8 @@ func runTaskProcessor(store *db_source.Store, redisConn asynq.RedisClientOpt) {
 	}
 }
 
-func grpcServer(config *utils.Config, store *db_source.Store) error {
-	server, err := gapi.NewServer(config, store)
+func grpcServer(config *utils.Config, store *db_source.Store, taskDistributor worker.TaskDistributor) error {
+	server, err := gapi.NewServer(config, store, taskDistributor)
 	if err != nil {
 		log.Fatal().Msgf("Cannot start server %v", err)
 	}

@@ -10,6 +10,7 @@ import (
 	"github.com/suhailmuhammed157/simple_bank/pb"
 	"github.com/suhailmuhammed157/simple_bank/utils"
 	"github.com/suhailmuhammed157/simple_bank/val"
+	"github.com/suhailmuhammed157/simple_bank/worker"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -44,6 +45,11 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 			}
 		}
 		return nil, status.Errorf(codes.Internal, "Failed to create user %s", err)
+	}
+
+	err = server.taskDistributor.DistributeTaskSendVerifyEmail(ctx, &worker.PayloadSendVerifyEmail{Username: args.Username})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "unable to send email: %s", err)
 	}
 
 	usr := &pb.CreateUserResponse{
