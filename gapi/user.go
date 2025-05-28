@@ -28,14 +28,22 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, invalidArgumentError(violations)
 	}
 
-	args := db_source.CreateUserParams{
-		Username:       req.GetUsername(),
-		HashedPassword: hashedPassword,
-		FullName:       req.GetFullName(),
-		Email:          req.GetEmail(),
+	args := db_source.CreateUserTxParams{
+		CreateUserParams: db_source.CreateUserParams{
+			Username:       req.GetUsername(),
+			HashedPassword: hashedPassword,
+			FullName:       req.GetFullName(),
+			Email:          req.GetEmail(),
+		},
+
+		//after create user need to send email
+		AfterCreateUser: func(user db_source.User) error {
+			payload := &worker.PayloadSendVerifyEmail{Username: req.GetUsername()}
+			return server.taskDistributor.DistributeTaskSendVerifyEmail(ctx, payload)
+		},
 	}
 
-	user, err := server.store.CreateUser(ctx, args)
+	txResult, err := server.store.CreateUserTx(ctx, args)
 	if err != nil {
 		if pqError, ok := err.(*pq.Error); ok {
 			switch pqError.Code.Name() {
@@ -47,13 +55,8 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, status.Errorf(codes.Internal, "Failed to create user %s", err)
 	}
 
-	err = server.taskDistributor.DistributeTaskSendVerifyEmail(ctx, &worker.PayloadSendVerifyEmail{Username: args.Username})
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "unable to send email: %s", err)
-	}
-
 	usr := &pb.CreateUserResponse{
-		User: convertUser(&user),
+		User: convertUser(&txResult.User),
 	}
 
 	return usr, nil
