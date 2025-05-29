@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/hibiken/asynq"
 	"github.com/lib/pq"
 	"github.com/suhailmuhammed157/simple_bank/db_source"
 	"github.com/suhailmuhammed157/simple_bank/pb"
@@ -39,7 +40,12 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		//after create user need to send email
 		AfterCreateUser: func(user db_source.User) error {
 			payload := &worker.PayloadSendVerifyEmail{Username: req.GetUsername()}
-			return server.taskDistributor.DistributeTaskSendVerifyEmail(ctx, payload)
+			opts := []asynq.Option{
+				asynq.MaxRetry(10),
+				asynq.ProcessIn(10 * time.Second),
+				asynq.Queue("critical"),
+			}
+			return server.taskDistributor.DistributeTaskSendVerifyEmail(ctx, payload, opts...)
 		},
 	}
 
