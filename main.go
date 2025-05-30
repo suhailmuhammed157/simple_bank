@@ -40,15 +40,15 @@ func main() {
 	redisConn := asynq.RedisClientOpt{Addr: config.RedisServerAddress}
 	taskDistributor := worker.NewRedisTaskDistributor(redisConn)
 
-	go runTaskProcessor(store, redisConn)
+	go runTaskProcessor(store, redisConn, &config)
 	err = grpcServer(&config, store, taskDistributor)
 	if err != nil {
 		log.Fatal().Msg("Cannot start server")
 	}
 }
 
-func runTaskProcessor(store *db_source.Store, redisConn asynq.RedisClientOpt) {
-	taskProcessor := worker.NewRedisTaskProcessor(redisConn, store)
+func runTaskProcessor(store *db_source.Store, redisConn asynq.RedisClientOpt, config *utils.Config) {
+	taskProcessor := worker.NewRedisTaskProcessor(redisConn, store, config)
 	err := taskProcessor.Start()
 	if err != nil {
 		log.Fatal().Msg("Cannot start server")
