@@ -11,6 +11,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/suhailmuhammed157/simple_bank/db_source"
+	"github.com/suhailmuhammed157/simple_bank/email"
 	"github.com/suhailmuhammed157/simple_bank/gapi"
 	"github.com/suhailmuhammed157/simple_bank/pb"
 	"github.com/suhailmuhammed157/simple_bank/utils"
@@ -48,7 +49,8 @@ func main() {
 }
 
 func runTaskProcessor(store *db_source.Store, redisConn asynq.RedisClientOpt, config *utils.Config) {
-	taskProcessor := worker.NewRedisTaskProcessor(redisConn, store, config)
+	mailer := email.NewEmailSender(config.EmailHost, config.EmailPort, config.EmailUser, config.EmailPassword)
+	taskProcessor := worker.NewRedisTaskProcessor(redisConn, store, mailer)
 	err := taskProcessor.Start()
 	if err != nil {
 		log.Fatal().Msg("Cannot start server")

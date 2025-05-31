@@ -8,7 +8,6 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog/log"
-	"github.com/suhailmuhammed157/simple_bank/email"
 )
 
 const TaskSendVerifyEmail = "task:send_verify_email"
@@ -47,9 +46,7 @@ func (taskProcessor RedisTaskProcessor) ProcessTaskSendVerifyEmail(ctx context.C
 
 		return fmt.Errorf("failed to get user: %w", err) // need to retry
 	}
-
-	emailSender := email.NewEmailSender(taskProcessor.config.EmailHost, taskProcessor.config.EmailPort, taskProcessor.config.EmailUser, taskProcessor.config.EmailPassword)
-	emailSender.SendEmail("register@simplebank.com", "emod969157@gmail.com")
+	taskProcessor.mailer.SendEmail("register@simplebank.com", user.Email)
 	log.Info().Str("type", task.Type()).Bytes("payload", task.Payload()).Str("email", user.Email).Msg("processed task")
 
 	return nil
