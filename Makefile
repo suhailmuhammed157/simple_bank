@@ -19,6 +19,9 @@ migrateDown:
 migrateDown1:
 	migrate -path database/migrations -database "postgres://root:password@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
 
+createMigration:
+	migrate create -ext sql -dir ./database/migrations -seq $(name)
+
 sqlc:
 	sqlc generate
 
@@ -37,4 +40,4 @@ proto:
     --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
     proto/*.proto
 
-.PHONY: createDb postgres dropDb migrateUp migrateDown sqlc test server proto redis
+.PHONY: createDb postgres dropDb migrateUp migrateDown sqlc test server proto redis createMigration
