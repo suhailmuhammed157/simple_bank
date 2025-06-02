@@ -10,4 +10,5 @@ service SimpleBank{
     rpc Login (LoginUserRequest) returns (LoginUserResponse);
     rpc GetUserDetails (GetUserDetailsRequest) returns (GetUserDetailsResponse);
     rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
+    rpc VerifyUser (VerifyUserRequest) returns (VerifyUserResponse);
 }
