@@ -213,6 +213,57 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	return response, nil
 }
 
+func (server *Server) VerifyUser(ctx context.Context, req *pb.VerifyUserRequest) (*pb.VerifyUserResponse, error) {
+
+	violations := validateVerifyUserRequest(req)
+	if len(violations) > 0 {
+		return nil, invalidArgumentError(violations)
+	}
+
+	verifyEmail, err := server.store.GetVerifyEmail(ctx, req.GetSecretCode())
+
+	if err != nil {
+		return nil, status.Errorf(codes.PermissionDenied, "invalid secret code: %v", err)
+	}
+
+	if verifyEmail.IsUserVerified.Valid && verifyEmail.IsUserVerified.Bool {
+		return nil, status.Errorf(codes.PermissionDenied, "user is already verified")
+	}
+
+	if time.Now().After(verifyEmail.ExpiredAt) {
+		return nil, status.Errorf(codes.PermissionDenied, "secret code expired")
+	}
+
+	updatedUser, err := server.store.UpdateUser(ctx, db_source.UpdateUserParams{
+		IsUserVerified: sql.NullBool{
+			Bool:  true,
+			Valid: true,
+		},
+		Username: verifyEmail.Username,
+	})
+	if err != nil {
+
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "user not found %v", err)
+		}
+
+		return nil, status.Errorf(codes.Internal, "update user failed %v", err)
+	}
+
+	_, err = server.store.UpdateVerifyEmail(ctx, db_source.UpdateVerifyEmailParams{
+		IsUsed: true,
+		ID:     verifyEmail.ID,
+	})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "email verification update failed %v", err)
+	}
+	response := &pb.VerifyUserResponse{
+		User: convertUser(&updatedUser),
+	}
+
+	return response, nil
+}
+
 func validateCreateUserRequest(req *pb.CreateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 
 	if err := val.ValidateUsername(req.Username); err != nil {
@@ -275,6 +326,16 @@ func validateUpdateUserRequest(req *pb.UpdateUserRequest, username string) (viol
 		if err := val.ValidateEmail(*req.Email); err != nil {
 			violations = append(violations, fieldViolation("email", err))
 		}
+	}
+
+	return violations
+}
+
+func validateVerifyUserRequest(req *pb.VerifyUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+
+	if err := val.ValidateSecretCode(req.GetSecretCode()); err != nil {
+		violations = append(violations, fieldViolation("secret_code", err))
+
 	}
 
 	return violations

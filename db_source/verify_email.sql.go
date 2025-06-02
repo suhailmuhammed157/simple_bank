@@ -7,6 +7,8 @@ package db_source
 
 import (
 	"context"
+	"database/sql"
+	"time"
 )
 
 const createVerifyEmail = `-- name: CreateVerifyEmail :one
@@ -40,18 +42,28 @@ func (q *Queries) CreateVerifyEmail(ctx context.Context, arg CreateVerifyEmailPa
 }
 
 const getVerifyEmail = `-- name: GetVerifyEmail :one
-SELECT id, username, email, secret_code, is_used, created_at, expired_at FROM verify_emails
-WHERE username = $1 AND secret_code= $2
+SELECT 
+    verify_emails.id, verify_emails.username, verify_emails.email, verify_emails.secret_code, verify_emails.is_used, verify_emails.created_at, verify_emails.expired_at, 
+    users.is_user_verified
+FROM verify_emails
+LEFT JOIN users ON users.username = verify_emails.username
+WHERE verify_emails.secret_code = $1
 `
 
-type GetVerifyEmailParams struct {
-	Username   string `json:"username"`
-	SecretCode string `json:"secret_code"`
+type GetVerifyEmailRow struct {
+	ID             int64        `json:"id"`
+	Username       string       `json:"username"`
+	Email          string       `json:"email"`
+	SecretCode     string       `json:"secret_code"`
+	IsUsed         bool         `json:"is_used"`
+	CreatedAt      time.Time    `json:"created_at"`
+	ExpiredAt      time.Time    `json:"expired_at"`
+	IsUserVerified sql.NullBool `json:"is_user_verified"`
 }
 
-func (q *Queries) GetVerifyEmail(ctx context.Context, arg GetVerifyEmailParams) (VerifyEmail, error) {
-	row := q.db.QueryRowContext(ctx, getVerifyEmail, arg.Username, arg.SecretCode)
-	var i VerifyEmail
+func (q *Queries) GetVerifyEmail(ctx context.Context, secretCode string) (GetVerifyEmailRow, error) {
+	row := q.db.QueryRowContext(ctx, getVerifyEmail, secretCode)
+	var i GetVerifyEmailRow
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
@@ -60,6 +72,7 @@ func (q *Queries) GetVerifyEmail(ctx context.Context, arg GetVerifyEmailParams) 
 		&i.IsUsed,
 		&i.CreatedAt,
 		&i.ExpiredAt,
+		&i.IsUserVerified,
 	)
 	return i, err
 }

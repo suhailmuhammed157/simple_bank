@@ -65,3 +65,11 @@ func ValidateEmail(email string) error {
 
 	return nil
 }
+
+func ValidateSecretCode(secretCode string) error {
+
+	if secretCode == "" {
+		return fmt.Errorf("secret code must not be empty")
+	}
+	return nil
+}
