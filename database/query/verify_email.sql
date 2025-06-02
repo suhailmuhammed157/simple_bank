@@ -7,8 +7,12 @@ INSERT INTO verify_emails (
 RETURNING *;
 
 -- name: GetVerifyEmail :one
-SELECT * FROM verify_emails
-WHERE username = $1 AND secret_code= $2;
+SELECT 
+    verify_emails.*, 
+    users.is_user_verified
+FROM verify_emails
+LEFT JOIN users ON users.username = verify_emails.username
+WHERE verify_emails.secret_code = $1;
 
 -- name: UpdateVerifyEmail :one
 UPDATE verify_emails
