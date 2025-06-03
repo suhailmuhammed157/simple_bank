@@ -220,18 +220,13 @@ func (server *Server) VerifyUser(ctx context.Context, req *pb.VerifyUserRequest)
 		return nil, invalidArgumentError(violations)
 	}
 
-	verifyEmail, err := server.store.GetVerifyEmail(ctx, req.GetSecretCode())
+	verifyEmail, err := server.store.UpdateVerifyEmail(ctx, db_source.UpdateVerifyEmailParams{
+		ID:         int64(req.GetEmailId()),
+		SecretCode: req.GetSecretCode(),
+	})
 
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "invalid secret code: %v", err)
-	}
-
-	if verifyEmail.IsUserVerified.Valid && verifyEmail.IsUserVerified.Bool {
-		return nil, status.Errorf(codes.PermissionDenied, "user is already verified")
-	}
-
-	if time.Now().After(verifyEmail.ExpiredAt) {
-		return nil, status.Errorf(codes.PermissionDenied, "secret code expired")
 	}
 
 	updatedUser, err := server.store.UpdateUser(ctx, db_source.UpdateUserParams{
@@ -242,21 +237,12 @@ func (server *Server) VerifyUser(ctx context.Context, req *pb.VerifyUserRequest)
 		Username: verifyEmail.Username,
 	})
 	if err != nil {
-
 		if err == sql.ErrNoRows {
 			return nil, status.Errorf(codes.NotFound, "user not found %v", err)
 		}
-
 		return nil, status.Errorf(codes.Internal, "update user failed %v", err)
 	}
 
-	_, err = server.store.UpdateVerifyEmail(ctx, db_source.UpdateVerifyEmailParams{
-		IsUsed: true,
-		ID:     verifyEmail.ID,
-	})
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "email verification update failed %v", err)
-	}
 	response := &pb.VerifyUserResponse{
 		User: convertUser(&updatedUser),
 	}

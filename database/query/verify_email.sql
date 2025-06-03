@@ -17,7 +17,10 @@ WHERE verify_emails.secret_code = $1;
 -- name: UpdateVerifyEmail :one
 UPDATE verify_emails
 SET
-  is_used = sqlc.arg(is_used)
+  is_used = TRUE
 WHERE 
   id = sqlc.arg(id)
+  AND secret_code = sqlc.arg(secret_code)
+  AND is_used = FALSE
+  AND expired_at > now()
 RETURNING *;

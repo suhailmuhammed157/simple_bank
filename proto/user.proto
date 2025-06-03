@@ -69,6 +69,7 @@ message UpdateUserResponse{
 // -------- get user details ----------
 message VerifyUserRequest{
     string secret_code = 1;
+	int32 email_id = 2;
 }
 
 message VerifyUserResponse{

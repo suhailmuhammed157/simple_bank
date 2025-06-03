@@ -538,6 +538,7 @@ func (x *UpdateUserResponse) GetUser() *User {
 type VerifyUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SecretCode    string                 `protobuf:"bytes,1,opt,name=secret_code,json=secretCode,proto3" json:"secret_code,omitempty"`
+	EmailId       int32                  `protobuf:"varint,2,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -577,6 +578,13 @@ func (x *VerifyUserRequest) GetSecretCode() string {
 		return x.SecretCode
 	}
 	return ""
+}
+
+func (x *VerifyUserRequest) GetEmailId() int32 {
+	if x != nil {
+		return x.EmailId
+	}
+	return 0
 }
 
 type VerifyUserResponse struct {
@@ -665,10 +673,11 @@ const file_user_proto_rawDesc = "" +
 	"_full_nameB\b\n" +
 	"\x06_email\"2\n" +
 	"\x12UpdateUserResponse\x12\x1c\n" +
-	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04user\"4\n" +
+	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04user\"O\n" +
 	"\x11VerifyUserRequest\x12\x1f\n" +
 	"\vsecret_code\x18\x01 \x01(\tR\n" +
-	"secretCode\"2\n" +
+	"secretCode\x12\x19\n" +
+	"\bemail_id\x18\x02 \x01(\x05R\aemailId\"2\n" +
 	"\x12VerifyUserResponse\x12\x1c\n" +
 	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04userB-Z+github.com/suhailmuhammed157/simple_bank/pbb\x06proto3"
 
