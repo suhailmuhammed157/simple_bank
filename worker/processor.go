@@ -5,7 +5,7 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog/log"
-	"github.com/suhailmuhammed157/simple_bank/db_source"
+	db_source "github.com/suhailmuhammed157/simple_bank/db_source/sqlc"
 	"github.com/suhailmuhammed157/simple_bank/email"
 )
 

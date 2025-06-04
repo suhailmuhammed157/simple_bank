@@ -7,7 +7,7 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/lib/pq"
-	"github.com/suhailmuhammed157/simple_bank/db_source"
+	db_source "github.com/suhailmuhammed157/simple_bank/db_source/sqlc"
 	"github.com/suhailmuhammed157/simple_bank/pb"
 	"github.com/suhailmuhammed157/simple_bank/utils"
 	"github.com/suhailmuhammed157/simple_bank/val"

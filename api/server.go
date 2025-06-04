@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
-	"github.com/suhailmuhammed157/simple_bank/db_source"
+	db_source "github.com/suhailmuhammed157/simple_bank/db_source/sqlc"
 	"github.com/suhailmuhammed157/simple_bank/token"
 	"github.com/suhailmuhammed157/simple_bank/utils"
 )
