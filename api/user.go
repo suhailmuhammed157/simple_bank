@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"time"
@@ -102,7 +101,7 @@ func (server *Server) Login(ctx *gin.Context) {
 	user, err := server.store.GetUser(ctx, req.Username)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db_source.NoRowFound {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}

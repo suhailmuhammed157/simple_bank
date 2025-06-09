@@ -16,11 +16,11 @@ type TaskProcessor interface {
 
 type RedisTaskProcessor struct {
 	server *asynq.Server
-	store  *db_source.Store
+	store  db_source.Store
 	mailer email.MailSender
 }
 
-func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store *db_source.Store, mailer email.MailSender) TaskProcessor {
+func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store db_source.Store, mailer email.MailSender) TaskProcessor {
 	server := asynq.NewServer(
 		redisOpt,
 		asynq.Config{

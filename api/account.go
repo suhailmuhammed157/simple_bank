@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"errors"
 	"net/http"
 
@@ -64,7 +63,7 @@ func (server *Server) GetAccountDetails(ctx *gin.Context) {
 
 	account, err := server.store.GetAccount(ctx, req.Id)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db_source.NoRowFound {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}

@@ -10,13 +10,13 @@ import (
 
 type Server struct {
 	pb.UnimplementedSimpleBankServer
-	store           *db_source.Store
+	store           db_source.Store
 	tokenMaker      token.Maker
 	config          *utils.Config
 	taskDistributor worker.TaskDistributor
 }
 
-func NewServer(config *utils.Config, store *db_source.Store, taskDistributor worker.TaskDistributor) (*Server, error) {
+func NewServer(config *utils.Config, store db_source.Store, taskDistributor worker.TaskDistributor) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMaker(config.SymmetricKey)
 	if err != nil {
 		return nil, err

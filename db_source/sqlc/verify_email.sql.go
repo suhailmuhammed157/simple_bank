@@ -7,8 +7,9 @@ package db_source
 
 import (
 	"context"
-	"database/sql"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createVerifyEmail = `-- name: CreateVerifyEmail :one
@@ -27,7 +28,7 @@ type CreateVerifyEmailParams struct {
 }
 
 func (q *Queries) CreateVerifyEmail(ctx context.Context, arg CreateVerifyEmailParams) (VerifyEmail, error) {
-	row := q.db.QueryRowContext(ctx, createVerifyEmail, arg.Username, arg.Email, arg.SecretCode)
+	row := q.db.QueryRow(ctx, createVerifyEmail, arg.Username, arg.Email, arg.SecretCode)
 	var i VerifyEmail
 	err := row.Scan(
 		&i.ID,
@@ -51,18 +52,18 @@ WHERE verify_emails.secret_code = $1
 `
 
 type GetVerifyEmailRow struct {
-	ID             int64        `json:"id"`
-	Username       string       `json:"username"`
-	Email          string       `json:"email"`
-	SecretCode     string       `json:"secret_code"`
-	IsUsed         bool         `json:"is_used"`
-	CreatedAt      time.Time    `json:"created_at"`
-	ExpiredAt      time.Time    `json:"expired_at"`
-	IsUserVerified sql.NullBool `json:"is_user_verified"`
+	ID             int64       `json:"id"`
+	Username       string      `json:"username"`
+	Email          string      `json:"email"`
+	SecretCode     string      `json:"secret_code"`
+	IsUsed         bool        `json:"is_used"`
+	CreatedAt      time.Time   `json:"created_at"`
+	ExpiredAt      time.Time   `json:"expired_at"`
+	IsUserVerified pgtype.Bool `json:"is_user_verified"`
 }
 
 func (q *Queries) GetVerifyEmail(ctx context.Context, secretCode string) (GetVerifyEmailRow, error) {
-	row := q.db.QueryRowContext(ctx, getVerifyEmail, secretCode)
+	row := q.db.QueryRow(ctx, getVerifyEmail, secretCode)
 	var i GetVerifyEmailRow
 	err := row.Scan(
 		&i.ID,
@@ -95,7 +96,7 @@ type UpdateVerifyEmailParams struct {
 }
 
 func (q *Queries) UpdateVerifyEmail(ctx context.Context, arg UpdateVerifyEmailParams) (VerifyEmail, error) {
-	row := q.db.QueryRowContext(ctx, updateVerifyEmail, arg.ID, arg.SecretCode)
+	row := q.db.QueryRow(ctx, updateVerifyEmail, arg.ID, arg.SecretCode)
 	var i VerifyEmail
 	err := row.Scan(
 		&i.ID,

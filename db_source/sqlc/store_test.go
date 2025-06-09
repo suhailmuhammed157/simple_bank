@@ -9,7 +9,7 @@ import (
 )
 
 func TestTransferTx(t *testing.T) {
-	store := NewStore(testDB)
+	store := NewStore(testStore.connPool)
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)
 
@@ -99,10 +99,10 @@ func TestTransferTx(t *testing.T) {
 
 	}
 
-	updateAccount1, err := testQueries.GetAccount(context.Background(), account1.ID)
+	updateAccount1, err := testStore.GetAccount(context.Background(), account1.ID)
 	require.NoError(t, err)
 
-	updateAccount2, err := testQueries.GetAccount(context.Background(), account2.ID)
+	updateAccount2, err := testStore.GetAccount(context.Background(), account2.ID)
 	require.NoError(t, err)
 
 	fmt.Println("After transaction >>> ", updateAccount1.Balance, updateAccount2.Balance)

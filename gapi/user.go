@@ -2,10 +2,10 @@ package gapi
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/hibiken/asynq"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lib/pq"
 	db_source "github.com/suhailmuhammed157/simple_bank/db_source/sqlc"
 	"github.com/suhailmuhammed157/simple_bank/pb"
@@ -79,7 +79,7 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginUserRequest) (*pb.
 	user, err := server.store.GetUser(ctx, req.GetUsername())
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db_source.NoRowFound {
 			return nil, status.Errorf(codes.NotFound, "user or password not found: %s", err)
 
 		}
@@ -145,7 +145,7 @@ func (server *Server) GetUserDetails(ctx context.Context, req *pb.GetUserDetails
 	user, err := server.store.GetUser(ctx, payload.Username)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db_source.NoRowFound {
 			return nil, status.Errorf(codes.NotFound, "user not found: %s", err)
 
 		}
@@ -171,11 +171,11 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	args := db_source.UpdateUserParams{
 
-		FullName: sql.NullString{
+		FullName: pgtype.Text{
 			String: req.GetFullName(),
 			Valid:  req.FullName != nil,
 		},
-		Email: sql.NullString{
+		Email: pgtype.Text{
 			String: req.GetEmail(),
 			Valid:  req.Email != nil,
 		},
@@ -187,12 +187,12 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Failed to hash password %s", err)
 		}
-		args.HashedPassword = sql.NullString{
+		args.HashedPassword = pgtype.Text{
 			String: hashedPassword,
 			Valid:  req.Password != nil,
 		}
 
-		args.PasswordChangedAt = sql.NullTime{
+		args.PasswordChangedAt = pgtype.Timestamptz{
 			Time:  time.Now(),
 			Valid: true,
 		}
@@ -201,7 +201,7 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	updatedUser, err := server.store.UpdateUser(ctx, args)
 	if err != nil {
 
-		if err == sql.ErrNoRows {
+		if err == db_source.NoRowFound {
 			return nil, status.Errorf(codes.NotFound, "user not found %v", err)
 		}
 
@@ -230,14 +230,14 @@ func (server *Server) VerifyUser(ctx context.Context, req *pb.VerifyUserRequest)
 	}
 
 	updatedUser, err := server.store.UpdateUser(ctx, db_source.UpdateUserParams{
-		IsUserVerified: sql.NullBool{
+		IsUserVerified: pgtype.Bool{
 			Bool:  true,
 			Valid: true,
 		},
 		Username: verifyEmail.Username,
 	})
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db_source.NoRowFound {
 			return nil, status.Errorf(codes.NotFound, "user not found %v", err)
 		}
 		return nil, status.Errorf(codes.Internal, "update user failed %v", err)

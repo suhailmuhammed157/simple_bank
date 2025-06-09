@@ -1,13 +1,14 @@
 package main
 
 import (
-	"database/sql"
+	"context"
 	"os"
 
 	"net"
 
 	"github.com/hibiken/asynq"
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	db_source "github.com/suhailmuhammed157/simple_bank/db_source/sqlc"
@@ -31,7 +32,8 @@ func main() {
 		log.Fatal().Msg("Config loading error")
 	}
 
-	conn, err := sql.Open(config.DBDriver, config.DataSource)
+	// conn, err := sql.Open(config.DBDriver, config.DataSource)
+	conn, err := pgxpool.New(context.Background(), config.DataSource)
 	if err != nil {
 		log.Fatal().Msg("Cannot connect to database")
 	}
@@ -48,7 +50,7 @@ func main() {
 	}
 }
 
-func runTaskProcessor(store *db_source.Store, redisConn asynq.RedisClientOpt, config *utils.Config) {
+func runTaskProcessor(store db_source.Store, redisConn asynq.RedisClientOpt, config *utils.Config) {
 	mailer := email.NewEmailSender(config.EmailHost, config.EmailPort, config.EmailUser, config.EmailPassword)
 	taskProcessor := worker.NewRedisTaskProcessor(redisConn, store, mailer)
 	err := taskProcessor.Start()
@@ -57,7 +59,7 @@ func runTaskProcessor(store *db_source.Store, redisConn asynq.RedisClientOpt, co
 	}
 }
 
-func grpcServer(config *utils.Config, store *db_source.Store, taskDistributor worker.TaskDistributor) error {
+func grpcServer(config *utils.Config, store db_source.Store, taskDistributor worker.TaskDistributor) error {
 	server, err := gapi.NewServer(config, store, taskDistributor)
 	if err != nil {
 		log.Fatal().Msgf("Cannot start server %v", err)

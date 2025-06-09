@@ -1,12 +1,12 @@
 package api
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	db_source "github.com/suhailmuhammed157/simple_bank/db_source/sqlc"
 )
 
 type NewTokenRequest struct {
@@ -35,7 +35,7 @@ func (server *Server) IssueNewToken(ctx *gin.Context) {
 
 	session, err := server.store.GetSession(ctx, refreshPayload.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db_source.NoRowFound {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}

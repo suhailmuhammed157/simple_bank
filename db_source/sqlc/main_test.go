@@ -1,30 +1,30 @@
 package db_source
 
 import (
-	"database/sql"
+	"context"
 	"log"
 	"os"
 	"testing"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/lib/pq"
 	"github.com/suhailmuhammed157/simple_bank/utils"
 )
 
-var testQueries *Queries
-var testDB *sql.DB
+var testStore Store
 
 func TestMain(m *testing.M) {
-	config, configErr := utils.LoadConfig("../.")
+	config, configErr := utils.LoadConfig("../../.")
 	if configErr != nil {
 		log.Fatal("Cannot load env")
 	}
-	var err error
-	testDB, err = sql.Open(config.DBDriver, config.DataSource)
+
+	connPool, err := pgxpool.New(context.Background(), config.DataSource)
 	if err != nil {
 		log.Fatal("Cannot connect to database")
 	}
 
-	testQueries = New(testDB)
+	testStore = NewStore(connPool)
 
 	os.Exit(m.Run())
 }
