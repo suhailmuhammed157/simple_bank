@@ -12,6 +12,7 @@ import (
 type TaskProcessor interface {
 	ProcessTaskSendVerifyEmail(ctx context.Context, task *asynq.Task) error
 	Start() error
+	Shutdown()
 }
 
 type RedisTaskProcessor struct {
@@ -46,4 +47,8 @@ func (redisTaskProcessor *RedisTaskProcessor) Start() error {
 	mux := asynq.NewServeMux()
 	mux.HandleFunc(TaskSendVerifyEmail, redisTaskProcessor.ProcessTaskSendVerifyEmail)
 	return redisTaskProcessor.server.Start(mux)
+}
+
+func (redisTaskProcessor *RedisTaskProcessor) Shutdown() {
+	redisTaskProcessor.server.Shutdown()
 }
