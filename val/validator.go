@@ -73,3 +73,11 @@ func ValidateSecretCode(secretCode string) error {
 	}
 	return nil
 }
+
+func ValidateCurrency(currency string) error {
+
+	if currency == "" {
+		return fmt.Errorf("currency must not be empty")
+	}
+	return nil
+}

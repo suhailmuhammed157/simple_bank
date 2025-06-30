@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/suhailmuhammed157/simple_bank/pb";
+import "google/protobuf/timestamp.proto";
+
+
+message Account{
+    int64 id = 1;
+    string owner = 2;
+    float balance = 3;
+    string currency = 4;
+    google.protobuf.Timestamp  created_at = 5;
+}
+
+message CreateAccountRequest{
+    string currency = 1;
+}
+
+message CreateAccountResponse{
+    Account account = 1;
+}
+
