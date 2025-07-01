@@ -8,6 +8,10 @@ RETURNING *;
 
 -- name: GetAccount :one
 SELECT * FROM accounts 
+WHERE id = $1;
+
+-- name: GetAccountByOwner :one
+SELECT * FROM accounts 
 WHERE owner = $1;
 
 -- name: ListAccounts :many

@@ -59,7 +59,7 @@ func (server *Server) GetAccountDetails(ctx context.Context, req *pb.Empty) (*pb
 		return nil, status.Errorf(codes.PermissionDenied, "token error: %v", err)
 	}
 
-	account, err := server.store.GetAccount(ctx, authPayload.Username)
+	account, err := server.store.GetAccountByOwner(ctx, authPayload.Username)
 	if err != nil {
 		if err == db_source.NoRowFound {
 			return nil, status.Errorf(codes.Unauthenticated, "account not found: %s", err)
