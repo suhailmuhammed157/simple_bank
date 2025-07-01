@@ -39,7 +39,7 @@ func TestCreateAccount(t *testing.T) {
 func TestGetAccount(t *testing.T) {
 	newAccount := createRandomAccount(t)
 
-	account, err := testStore.GetAccount(context.Background(), newAccount.ID)
+	account, err := testStore.GetAccount(context.Background(), newAccount.Owner)
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
 
@@ -56,7 +56,7 @@ func TestDeleteAccount(t *testing.T) {
 	err := testStore.DeleteAccount(context.Background(), newAccount.ID)
 	require.NoError(t, err)
 
-	account, err := testStore.GetAccount(context.Background(), newAccount.ID)
+	account, err := testStore.GetAccount(context.Background(), newAccount.Owner)
 
 	require.Error(t, err)
 	require.EqualError(t, err, pgx.ErrNoRows.Error())

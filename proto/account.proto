@@ -22,3 +22,8 @@ message CreateAccountResponse{
     Account account = 1;
 }
 
+message Empty {}
+
+message GetAccountDetailsResponse{
+    Account account = 1;
+}

@@ -58,38 +58,35 @@ func (server *Server) CreateAccount(ctx context.Context, req *pb.CreateAccountRe
 
 }
 
-// type GetAccountParam struct {
-// 	Id int64 `uri:"id" binding:"required"`
-// }
+func (server *Server) GetAccountDetails(ctx context.Context, req *pb.Empty) (*pb.GetAccountDetailsResponse, error) {
 
-// func (server *Server) GetAccountDetails(ctx *gin.Context) {
+	authPayload, err := server.authenticateUser(ctx)
 
-// 	var req GetAccountParam
-// 	if err := ctx.ShouldBindUri(&req); err != nil {
+	if err != nil {
+		return nil, status.Errorf(codes.PermissionDenied, "token error: %v", err)
+	}
 
-// 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-// 		return
-// 	}
+	account, err := server.store.GetAccount(ctx, authPayload.Username)
+	if err != nil {
+		if err == db_source.NoRowFound {
+			return nil, status.Errorf(codes.Unauthenticated, "account not found: %s", err)
+		}
+		return nil, status.Errorf(codes.Internal, "internal error: %s", err)
+	}
 
-// 	account, err := server.store.GetAccount(ctx, req.Id)
-// 	if err != nil {
-// 		if err == db_source.NoRowFound {
-// 			ctx.JSON(http.StatusNotFound, errorResponse(err))
-// 			return
-// 		}
-// 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-// 		return
-// 	}
+	acnt := &pb.GetAccountDetailsResponse{
+		Account: &pb.Account{
+			Id:        account.ID,
+			Owner:     account.Owner,
+			Balance:   float32(account.Balance),
+			Currency:  account.Currency,
+			CreatedAt: timestamppb.New(account.CreatedAt),
+		},
+	}
 
-// 	authPayload := ctx.MustGet(authorizationPayload).(*token.Payload)
-// 	if account.Owner != authPayload.Username {
-// 		ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("account does not belong to the current user ")))
-// 		return
-// 	}
+	return acnt, nil
 
-// 	ctx.JSON(http.StatusOK, account)
-
-// }
+}
 
 // type ListAccountsParams struct {
 // 	PageId   int32 `form:"page_id" binding:"required,min=1"`

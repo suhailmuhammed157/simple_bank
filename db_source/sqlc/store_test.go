@@ -99,10 +99,10 @@ func TestTransferTx(t *testing.T) {
 
 	}
 
-	updateAccount1, err := testStore.GetAccount(context.Background(), account1.ID)
+	updateAccount1, err := testStore.GetAccount(context.Background(), account1.Owner)
 	require.NoError(t, err)
 
-	updateAccount2, err := testStore.GetAccount(context.Background(), account2.ID)
+	updateAccount2, err := testStore.GetAccount(context.Background(), account2.Owner)
 	require.NoError(t, err)
 
 	fmt.Println("After transaction >>> ", updateAccount1.Balance, updateAccount2.Balance)

@@ -19,12 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SimpleBank_CreateUser_FullMethodName     = "/pb.SimpleBank/CreateUser"
-	SimpleBank_Login_FullMethodName          = "/pb.SimpleBank/Login"
-	SimpleBank_GetUserDetails_FullMethodName = "/pb.SimpleBank/GetUserDetails"
-	SimpleBank_UpdateUser_FullMethodName     = "/pb.SimpleBank/UpdateUser"
-	SimpleBank_VerifyUser_FullMethodName     = "/pb.SimpleBank/VerifyUser"
-	SimpleBank_CreateAccount_FullMethodName  = "/pb.SimpleBank/CreateAccount"
+	SimpleBank_CreateUser_FullMethodName        = "/pb.SimpleBank/CreateUser"
+	SimpleBank_Login_FullMethodName             = "/pb.SimpleBank/Login"
+	SimpleBank_GetUserDetails_FullMethodName    = "/pb.SimpleBank/GetUserDetails"
+	SimpleBank_UpdateUser_FullMethodName        = "/pb.SimpleBank/UpdateUser"
+	SimpleBank_VerifyUser_FullMethodName        = "/pb.SimpleBank/VerifyUser"
+	SimpleBank_CreateAccount_FullMethodName     = "/pb.SimpleBank/CreateAccount"
+	SimpleBank_GetAccountDetails_FullMethodName = "/pb.SimpleBank/GetAccountDetails"
 )
 
 // SimpleBankClient is the client API for SimpleBank service.
@@ -39,6 +40,7 @@ type SimpleBankClient interface {
 	VerifyUser(ctx context.Context, in *VerifyUserRequest, opts ...grpc.CallOption) (*VerifyUserResponse, error)
 	// ---------Account-------------
 	CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*CreateAccountResponse, error)
+	GetAccountDetails(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAccountDetailsResponse, error)
 }
 
 type simpleBankClient struct {
@@ -109,6 +111,16 @@ func (c *simpleBankClient) CreateAccount(ctx context.Context, in *CreateAccountR
 	return out, nil
 }
 
+func (c *simpleBankClient) GetAccountDetails(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAccountDetailsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAccountDetailsResponse)
+	err := c.cc.Invoke(ctx, SimpleBank_GetAccountDetails_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SimpleBankServer is the server API for SimpleBank service.
 // All implementations must embed UnimplementedSimpleBankServer
 // for forward compatibility.
@@ -121,6 +133,7 @@ type SimpleBankServer interface {
 	VerifyUser(context.Context, *VerifyUserRequest) (*VerifyUserResponse, error)
 	// ---------Account-------------
 	CreateAccount(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error)
+	GetAccountDetails(context.Context, *Empty) (*GetAccountDetailsResponse, error)
 	mustEmbedUnimplementedSimpleBankServer()
 }
 
@@ -148,6 +161,9 @@ func (UnimplementedSimpleBankServer) VerifyUser(context.Context, *VerifyUserRequ
 }
 func (UnimplementedSimpleBankServer) CreateAccount(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAccount not implemented")
+}
+func (UnimplementedSimpleBankServer) GetAccountDetails(context.Context, *Empty) (*GetAccountDetailsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountDetails not implemented")
 }
 func (UnimplementedSimpleBankServer) mustEmbedUnimplementedSimpleBankServer() {}
 func (UnimplementedSimpleBankServer) testEmbeddedByValue()                    {}
@@ -278,6 +294,24 @@ func _SimpleBank_CreateAccount_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SimpleBank_GetAccountDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SimpleBankServer).GetAccountDetails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SimpleBank_GetAccountDetails_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SimpleBankServer).GetAccountDetails(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SimpleBank_ServiceDesc is the grpc.ServiceDesc for SimpleBank service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -308,6 +342,10 @@ var SimpleBank_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAccount",
 			Handler:    _SimpleBank_CreateAccount_Handler,
+		},
+		{
+			MethodName: "GetAccountDetails",
+			Handler:    _SimpleBank_GetAccountDetails_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

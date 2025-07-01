@@ -186,6 +186,86 @@ func (x *CreateAccountResponse) GetAccount() *Account {
 	return nil
 }
 
+type Empty struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Empty) Reset() {
+	*x = Empty{}
+	mi := &file_account_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Empty) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Empty) ProtoMessage() {}
+
+func (x *Empty) ProtoReflect() protoreflect.Message {
+	mi := &file_account_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
+func (*Empty) Descriptor() ([]byte, []int) {
+	return file_account_proto_rawDescGZIP(), []int{3}
+}
+
+type GetAccountDetailsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Account       *Account               `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAccountDetailsResponse) Reset() {
+	*x = GetAccountDetailsResponse{}
+	mi := &file_account_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAccountDetailsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAccountDetailsResponse) ProtoMessage() {}
+
+func (x *GetAccountDetailsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_account_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAccountDetailsResponse.ProtoReflect.Descriptor instead.
+func (*GetAccountDetailsResponse) Descriptor() ([]byte, []int) {
+	return file_account_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetAccountDetailsResponse) GetAccount() *Account {
+	if x != nil {
+		return x.Account
+	}
+	return nil
+}
+
 var File_account_proto protoreflect.FileDescriptor
 
 const file_account_proto_rawDesc = "" +
@@ -201,6 +281,9 @@ const file_account_proto_rawDesc = "" +
 	"\x14CreateAccountRequest\x12\x1a\n" +
 	"\bcurrency\x18\x01 \x01(\tR\bcurrency\">\n" +
 	"\x15CreateAccountResponse\x12%\n" +
+	"\aaccount\x18\x01 \x01(\v2\v.pb.AccountR\aaccount\"\a\n" +
+	"\x05Empty\"B\n" +
+	"\x19GetAccountDetailsResponse\x12%\n" +
 	"\aaccount\x18\x01 \x01(\v2\v.pb.AccountR\aaccountB-Z+github.com/suhailmuhammed157/simple_bank/pbb\x06proto3"
 
 var (
@@ -215,21 +298,24 @@ func file_account_proto_rawDescGZIP() []byte {
 	return file_account_proto_rawDescData
 }
 
-var file_account_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_account_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_account_proto_goTypes = []any{
-	(*Account)(nil),               // 0: pb.Account
-	(*CreateAccountRequest)(nil),  // 1: pb.CreateAccountRequest
-	(*CreateAccountResponse)(nil), // 2: pb.CreateAccountResponse
-	(*timestamppb.Timestamp)(nil), // 3: google.protobuf.Timestamp
+	(*Account)(nil),                   // 0: pb.Account
+	(*CreateAccountRequest)(nil),      // 1: pb.CreateAccountRequest
+	(*CreateAccountResponse)(nil),     // 2: pb.CreateAccountResponse
+	(*Empty)(nil),                     // 3: pb.Empty
+	(*GetAccountDetailsResponse)(nil), // 4: pb.GetAccountDetailsResponse
+	(*timestamppb.Timestamp)(nil),     // 5: google.protobuf.Timestamp
 }
 var file_account_proto_depIdxs = []int32{
-	3, // 0: pb.Account.created_at:type_name -> google.protobuf.Timestamp
+	5, // 0: pb.Account.created_at:type_name -> google.protobuf.Timestamp
 	0, // 1: pb.CreateAccountResponse.account:type_name -> pb.Account
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 2: pb.GetAccountDetailsResponse.account:type_name -> pb.Account
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_account_proto_init() }
@@ -243,7 +329,7 @@ func file_account_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_account_proto_rawDesc), len(file_account_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

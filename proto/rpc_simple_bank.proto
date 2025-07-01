@@ -16,4 +16,5 @@ service SimpleBank{
     
     //---------Account-------------
     rpc CreateAccount (CreateAccountRequest) returns (CreateAccountResponse);
+    rpc GetAccountDetails (Empty) returns (GetAccountDetailsResponse);
 }
