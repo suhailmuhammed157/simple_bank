@@ -9,7 +9,6 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type CreateAccountRequest struct {
@@ -45,13 +44,7 @@ func (server *Server) CreateAccount(ctx context.Context, req *pb.CreateAccountRe
 	}
 
 	acnt := &pb.CreateAccountResponse{
-		Account: &pb.Account{
-			Id:        account.ID,
-			Owner:     account.Owner,
-			Balance:   float32(account.Balance),
-			Currency:  account.Currency,
-			CreatedAt: timestamppb.New(account.CreatedAt),
-		},
+		Account: convertAccount(&account),
 	}
 
 	return acnt, nil
@@ -75,48 +68,43 @@ func (server *Server) GetAccountDetails(ctx context.Context, req *pb.Empty) (*pb
 	}
 
 	acnt := &pb.GetAccountDetailsResponse{
-		Account: &pb.Account{
-			Id:        account.ID,
-			Owner:     account.Owner,
-			Balance:   float32(account.Balance),
-			Currency:  account.Currency,
-			CreatedAt: timestamppb.New(account.CreatedAt),
-		},
+		Account: convertAccount(&account),
 	}
 
 	return acnt, nil
 
 }
 
-// type ListAccountsParams struct {
-// 	PageId   int32 `form:"page_id" binding:"required,min=1"`
-// 	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
-// }
+func (server *Server) ListAccounts(ctx context.Context, req *pb.ListAccountRequest) (*pb.ListAccountResponse, error) {
 
-// func (server *Server) ListAccounts(ctx *gin.Context) {
+	authPayload, err := server.authenticateUser(ctx)
 
-// 	authPayload := ctx.MustGet(authorizationPayload).(*token.Payload)
+	if err != nil {
+		return nil, status.Errorf(codes.PermissionDenied, "token error: %v", err)
+	}
+	accounts, err := server.store.ListAccounts(ctx, db_source.ListAccountsParams{
+		Owner:  authPayload.Username,
+		Limit:  req.PageSize,
+		Offset: (req.PageId - 1) * req.PageSize,
+	})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "%v", err)
+	}
 
-// 	var req ListAccountsParams
-// 	if err := ctx.ShouldBindQuery(&req); err != nil {
+	var pb_accounts []*pb.Account
 
-// 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-// 		return
-// 	}
+	for _, acc := range accounts {
+		pb_acc := convertAccount(&acc)
+		pb_accounts = append(pb_accounts, pb_acc)
+	}
 
-// 	accounts, err := server.store.ListAccounts(ctx, db_source.ListAccountsParams{
-// 		Owner:  authPayload.Username,
-// 		Limit:  req.PageSize,
-// 		Offset: (req.PageId - 1) * req.PageSize,
-// 	})
-// 	if err != nil {
-// 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-// 		return
-// 	}
+	acnts := &pb.ListAccountResponse{
+		Accounts: pb_accounts,
+	}
 
-// 	ctx.JSON(http.StatusOK, accounts)
+	return acnts, nil
 
-// }
+}
 
 func validateCreateAccountRequest(req *pb.CreateAccountRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 

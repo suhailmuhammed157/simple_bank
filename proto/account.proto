@@ -27,3 +27,12 @@ message Empty {}
 message GetAccountDetailsResponse{
     Account account = 1;
 }
+
+message ListAccountRequest{
+    int32 pageId =1;
+    int32 pageSize =2;
+}
+
+message ListAccountResponse{
+    repeated Account accounts = 1;
+}
