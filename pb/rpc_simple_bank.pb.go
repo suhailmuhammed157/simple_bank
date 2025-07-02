@@ -25,7 +25,7 @@ var File_rpc_simple_bank_proto protoreflect.FileDescriptor
 const file_rpc_simple_bank_proto_rawDesc = "" +
 	"\n" +
 	"\x15rpc_simple_bank.proto\x12\x02pb\x1a\n" +
-	"user.proto\x1a\raccount.proto2\x88\x04\n" +
+	"user.proto\x1a\raccount.proto\x1a\vtoken.proto2\xc4\x04\n" +
 	"\n" +
 	"SimpleBank\x12;\n" +
 	"\n" +
@@ -38,7 +38,8 @@ const file_rpc_simple_bank_proto_rawDesc = "" +
 	"VerifyUser\x12\x15.pb.VerifyUserRequest\x1a\x16.pb.VerifyUserResponse\x12D\n" +
 	"\rCreateAccount\x12\x18.pb.CreateAccountRequest\x1a\x19.pb.CreateAccountResponse\x12=\n" +
 	"\x11GetAccountDetails\x12\t.pb.Empty\x1a\x1d.pb.GetAccountDetailsResponse\x12?\n" +
-	"\fListAccounts\x12\x16.pb.ListAccountRequest\x1a\x17.pb.ListAccountResponseB-Z+github.com/suhailmuhammed157/simple_bank/pbb\x06proto3"
+	"\fListAccounts\x12\x16.pb.ListAccountRequest\x1a\x17.pb.ListAccountResponse\x12:\n" +
+	"\rIssueNewToken\x12\x13.pb.NewTokenRequest\x1a\x14.pb.NewTokenResponseB-Z+github.com/suhailmuhammed157/simple_bank/pbb\x06proto3"
 
 var file_rpc_simple_bank_proto_goTypes = []any{
 	(*CreateUserRequest)(nil),         // 0: pb.CreateUserRequest
@@ -49,14 +50,16 @@ var file_rpc_simple_bank_proto_goTypes = []any{
 	(*CreateAccountRequest)(nil),      // 5: pb.CreateAccountRequest
 	(*Empty)(nil),                     // 6: pb.Empty
 	(*ListAccountRequest)(nil),        // 7: pb.ListAccountRequest
-	(*CreateUserResponse)(nil),        // 8: pb.CreateUserResponse
-	(*LoginUserResponse)(nil),         // 9: pb.LoginUserResponse
-	(*GetUserDetailsResponse)(nil),    // 10: pb.GetUserDetailsResponse
-	(*UpdateUserResponse)(nil),        // 11: pb.UpdateUserResponse
-	(*VerifyUserResponse)(nil),        // 12: pb.VerifyUserResponse
-	(*CreateAccountResponse)(nil),     // 13: pb.CreateAccountResponse
-	(*GetAccountDetailsResponse)(nil), // 14: pb.GetAccountDetailsResponse
-	(*ListAccountResponse)(nil),       // 15: pb.ListAccountResponse
+	(*NewTokenRequest)(nil),           // 8: pb.NewTokenRequest
+	(*CreateUserResponse)(nil),        // 9: pb.CreateUserResponse
+	(*LoginUserResponse)(nil),         // 10: pb.LoginUserResponse
+	(*GetUserDetailsResponse)(nil),    // 11: pb.GetUserDetailsResponse
+	(*UpdateUserResponse)(nil),        // 12: pb.UpdateUserResponse
+	(*VerifyUserResponse)(nil),        // 13: pb.VerifyUserResponse
+	(*CreateAccountResponse)(nil),     // 14: pb.CreateAccountResponse
+	(*GetAccountDetailsResponse)(nil), // 15: pb.GetAccountDetailsResponse
+	(*ListAccountResponse)(nil),       // 16: pb.ListAccountResponse
+	(*NewTokenResponse)(nil),          // 17: pb.NewTokenResponse
 }
 var file_rpc_simple_bank_proto_depIdxs = []int32{
 	0,  // 0: pb.SimpleBank.CreateUser:input_type -> pb.CreateUserRequest
@@ -67,16 +70,18 @@ var file_rpc_simple_bank_proto_depIdxs = []int32{
 	5,  // 5: pb.SimpleBank.CreateAccount:input_type -> pb.CreateAccountRequest
 	6,  // 6: pb.SimpleBank.GetAccountDetails:input_type -> pb.Empty
 	7,  // 7: pb.SimpleBank.ListAccounts:input_type -> pb.ListAccountRequest
-	8,  // 8: pb.SimpleBank.CreateUser:output_type -> pb.CreateUserResponse
-	9,  // 9: pb.SimpleBank.Login:output_type -> pb.LoginUserResponse
-	10, // 10: pb.SimpleBank.GetUserDetails:output_type -> pb.GetUserDetailsResponse
-	11, // 11: pb.SimpleBank.UpdateUser:output_type -> pb.UpdateUserResponse
-	12, // 12: pb.SimpleBank.VerifyUser:output_type -> pb.VerifyUserResponse
-	13, // 13: pb.SimpleBank.CreateAccount:output_type -> pb.CreateAccountResponse
-	14, // 14: pb.SimpleBank.GetAccountDetails:output_type -> pb.GetAccountDetailsResponse
-	15, // 15: pb.SimpleBank.ListAccounts:output_type -> pb.ListAccountResponse
-	8,  // [8:16] is the sub-list for method output_type
-	0,  // [0:8] is the sub-list for method input_type
+	8,  // 8: pb.SimpleBank.IssueNewToken:input_type -> pb.NewTokenRequest
+	9,  // 9: pb.SimpleBank.CreateUser:output_type -> pb.CreateUserResponse
+	10, // 10: pb.SimpleBank.Login:output_type -> pb.LoginUserResponse
+	11, // 11: pb.SimpleBank.GetUserDetails:output_type -> pb.GetUserDetailsResponse
+	12, // 12: pb.SimpleBank.UpdateUser:output_type -> pb.UpdateUserResponse
+	13, // 13: pb.SimpleBank.VerifyUser:output_type -> pb.VerifyUserResponse
+	14, // 14: pb.SimpleBank.CreateAccount:output_type -> pb.CreateAccountResponse
+	15, // 15: pb.SimpleBank.GetAccountDetails:output_type -> pb.GetAccountDetailsResponse
+	16, // 16: pb.SimpleBank.ListAccounts:output_type -> pb.ListAccountResponse
+	17, // 17: pb.SimpleBank.IssueNewToken:output_type -> pb.NewTokenResponse
+	9,  // [9:18] is the sub-list for method output_type
+	0,  // [0:9] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name
@@ -89,6 +94,7 @@ func file_rpc_simple_bank_proto_init() {
 	}
 	file_user_proto_init()
 	file_account_proto_init()
+	file_token_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

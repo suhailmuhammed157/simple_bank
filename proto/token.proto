@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/suhailmuhammed157/simple_bank/pb";
+import "google/protobuf/timestamp.proto";
+
+
+message NewTokenRequest{
+    string refresh_token = 1;
+}
+
+message NewTokenResponse{
+    string access_token = 1;
+    google.protobuf.Timestamp  access_token_expires_at = 2;
+}
+
+

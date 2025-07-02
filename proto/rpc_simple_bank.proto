@@ -5,6 +5,7 @@ package pb;
 option go_package = "github.com/suhailmuhammed157/simple_bank/pb";
 import "user.proto";
 import "account.proto";
+import "token.proto";
 
 service SimpleBank{
     //---------User-------------
@@ -18,4 +19,7 @@ service SimpleBank{
     rpc CreateAccount (CreateAccountRequest) returns (CreateAccountResponse);
     rpc GetAccountDetails (Empty) returns (GetAccountDetailsResponse);
     rpc ListAccounts (ListAccountRequest) returns (ListAccountResponse);
+    
+    //-------Token--------
+    rpc IssueNewToken (NewTokenRequest) returns (NewTokenResponse);
 }
